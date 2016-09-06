@@ -170,23 +170,19 @@ void directRec()
 			}
 			prod_rules[num].push_back("^");
 			alpha.clear();
+			rule_no[p] = num;
 			num++;
 		}
 		beta.clear();
 	}
 }
 
-void indirectRec(int k)
+void indirectRec()
 {
-	vector <string> alpha;
-	vector <string> beta;
+	stack <string> temp;
 	int numrules = 0;
-	for(int i=0; i<num; i++)
+	for(int i=1; i<num; i++)
 	{
-		if(numrules == num)
-			break;
-
-		numrules = num;
 
 		char a = prod_rules[i][0][0];
 
@@ -196,8 +192,32 @@ void indirectRec(int k)
 
 			if(isTerminal(b))
 			{
-				beta.push_back(prod_rules[i][j].substr(1));
-				for()
+				cout << "Inside Production " << a << "->" << b << endl;
+				string alpha = prod_rules[i][j].substr(1);
+				int rule = rule_no[b];
+				if(rule < i)
+				{
+					for(int k=prod_rules[i].size()-1; k>i; k--)
+					{
+						temp.push(prod_rules[i][k]);
+						cout << "pushing " << prod_rules[i][k] << endl;
+					}
+					int lim = prod_rules[i].size();
+					for(int k=lim-1; k>=i; k--)
+					{
+						prod_rules[i].pop_back();
+					}
+
+					for(int k=0; k<prod_rules[rule].size(); k++)
+					{
+						prod_rules[i].push_back(prod_rules[rule][k] + alpha);
+					}
+					while(!temp.empty())
+					{
+						prod_rules[i].push_back(temp.top());
+						temp.pop();
+					}
+				}
 			}
 		}
 	}
@@ -223,7 +243,7 @@ int main()
 {
 	define_grammar();
 	//debug();
-	directRec();
+	indirectRec();
 	printGrammar();
 
 	return 0;
